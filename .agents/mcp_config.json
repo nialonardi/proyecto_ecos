@@ -1,0 +1,27 @@
+/*{
+  "version": "1.0",
+  "description": "Registro de servidores MCP disponibles para ARIA",
+  "servers": [
+    {
+      "name": "mcp-rust-bridge",
+      "url": "/Users/nicolas/Cursos/IA UTN/Antigravity_multyMCP/target/release/mcp_rust_bridge",
+      "enabled": true,
+      "description": "Servidor MCP en Rust para Antigravity"
+    }
+  ],
+  "_add_server_example": {
+    "name": "nombre-del-servidor",
+    "url": "/ruta/al/servidor/o/binary",
+    "enabled": true,
+    "description": "descripción del servidor"
+  }
+}*/
+{
+  "mcpServers": {
+    "mcp-rust-bridge": {
+      "command": "/Users/nicolas/Cursos/IA UTN/Antigravity_multyMCP/target/release/mcp_rust_bridge",
+      "args": [],
+      "env": {}
+    }
+  }
+}

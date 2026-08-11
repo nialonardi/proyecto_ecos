@@ -7,6 +7,7 @@ import { Orchestrator } from './engine/Orchestrator.js';
 import { SeniorUI } from './components/SeniorUI.js';
 import { DashboardUI } from './components/DashboardUI.js';
 import { DevStudioUI } from './components/DevStudioUI.js';
+import { AuthUI } from './components/AuthUI.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const seniorViewEl = document.getElementById('seniorView');
@@ -28,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const authUI = new AuthUI(document.getElementById('authModal'));
+  orchestrator.auth = authUI; // Inyectar AuthUI en el orchestrator para que el Dashboard lo lea
+
   // 2. Instanciar Vistas de Interfaz
   const seniorUI = new SeniorUI(seniorViewEl, orchestrator);
   const dashboardUI = new DashboardUI(dashboardViewEl, orchestrator);
@@ -43,16 +47,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewPanels = document.querySelectorAll('.view-panel');
 
   navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
       const targetId = btn.getAttribute('data-target');
+      if (!targetId) return;
 
-      navButtons.forEach(b => b.classList.remove('active'));
-      viewPanels.forEach(p => p.classList.remove('active'));
+      const switchView = () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        viewPanels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const targetPanel = document.getElementById(targetId);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+          // Re-render dashboard if needed
+          if (targetId === 'dashboardView') dashboardUI.render();
+        }
+      };
 
-      btn.classList.add('active');
-      const targetPanel = document.getElementById(targetId);
-      if (targetPanel) {
-        targetPanel.classList.add('active');
+      if (targetId === 'dashboardView') {
+        authUI.showLoginModal(['family', 'health', 'admin'], switchView);
+      } else if (targetId === 'devstudioView') {
+        authUI.showLoginModal(['admin'], switchView);
+      } else {
+        switchView();
       }
     });
   });

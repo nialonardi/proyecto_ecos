@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Presentación Final - Proyecto ECOS</title>
+  <meta name="description" content="Defensa UTN FRBA 2026 - IA Aplicada a Organizaciones">
+  <meta name="author" content="Nicolás Ialonardi">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Reveal.js core CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+  
+  <!-- Theme used for presentation (Dark/Sleek) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/night.min.css" id="theme">
+  
+  <!-- Custom Styles for Wow Factor -->
+  <style>
+    :root {
+      --teal: #1A5F7A;
+      --bone: #F9F8F6;
+      --olive: #4A5D4E;
+      --amber: #E5BA73;
+    }
+    .reveal h1, .reveal h2, .reveal h3 {
+      text-transform: none;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+    .reveal h1 { color: var(--teal); text-shadow: 0 0 20px rgba(26,95,122,0.6); }
+    .reveal .slide-background { opacity: 0.95; }
+    .box-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .tech-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      font-size: 0.7em;
+      text-align: left;
+    }
+    .tech-item {
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 8px;
+      border-left: 4px solid var(--teal);
+    }
+    .img-mockup {
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.1);
+      max-height: 50vh !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      
+      <!-- Portada -->
+      <section>
+        <h1 style="color: #38BDF8;">ECOS</h1>
+        <h3>Ecosistema Cognitivo de Orquestación Solidaria</h3>
+        <p>
+          <small>Inteligencia Artificial Aplicada a Organizaciones | UTN FRBA 2026</small>
+        </p>
+        <div class="box-card" style="font-size: 0.8em; color: #cbd5e1;">
+          <strong>Equipo:</strong> Nicolás Ialonardi, Brisa Perez Eceiza, Emmanuel Posadas
+        </div>
+      </section>
+
+      <!-- Problema y Solución -->
+      <section>
+        <section>
+          <h2>El Desafío</h2>
+          <p style="font-size: 0.9em; text-align: left;">
+            El envejecimiento poblacional y la <strong>demencia leve / Alzheimer inicial</strong> generan pérdida progresiva de la autonomía y aislamiento social.<br><br>
+            ❌ Las soluciones tecnológicas tradicionales imponen barreras complejas (menús, botones pequeños) causando frustración.
+          </p>
+        </section>
+        <section>
+          <h2>La Solución: ECOS</h2>
+          <p style="font-size: 0.9em; text-align: left;">
+            Acompañamiento proactivo basado en voz y presencia <strong>(Zero-UI)</strong>.<br>
+            ✅ Estimulación cognitiva por reminiscencia.<br>
+            ✅ Terapia de Validación ante crisis (Síndrome del Ocaso).<br>
+            ✅ Soporte afectivo familiar continuo.
+          </p>
+        </section>
+      </section>
+
+      <!-- Stack Tecnológico -->
+      <section>
+        <h2>Stack Tecnológico</h2>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <strong>Frontend (Zero-UI)</strong><br>
+            <span style="color: #94a3b8;">HTML5 Nativo + CSS Vanilla + JS ES6. Elegido por su velocidad extrema (60 FPS) y cero dependencias pesadas.</span>
+          </div>
+          <div class="tech-item">
+            <strong>Motor Agéntico</strong><br>
+            <span style="color: #94a3b8;">JS Nativo + Web Speech API (Voz) coordinando un ciclo cíclico de 7 pasos 100% en el cliente local.</span>
+          </div>
+          <div class="tech-item">
+            <strong>Persistencia de Memoria</strong><br>
+            <span style="color: #94a3b8;">LocalStorage (MemoryStore) en lugar de DB Cloud para garantizar total privacidad médica del paciente (Offline).</span>
+          </div>
+          <div class="tech-item">
+            <strong>Despliegue y Pruebas</strong><br>
+            <span style="color: #94a3b8;">Servidor ligero en Python + Hub MCP Rust (Antigravity_multyMCP) para consultas de arquitectura (SOTA).</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Evidencia: Reposo -->
+      <section>
+        <h2>Estado A: Reposo Activo</h2>
+        <img src="assets/screenshot_reposo.jpg" class="img-mockup" alt="Reposo Activo">
+        <p style="font-size: 0.7em;">Reloj analógico clásico (Gris Neblina). Detección continua de mirada (>3s) para despertar.</p>
+      </section>
+
+      <!-- Evidencia: Estimulación -->
+      <section>
+        <h2>Estado B: Estimulación Diurna</h2>
+        <img src="assets/screenshot_estimulacion.jpg" class="img-mockup" alt="Estimulación Diurna">
+        <p style="font-size: 0.7em;">Azul Teal Clínico. Fotografías biográficas a gran escala. Apoyo de texto >36pt para mitigar pérdida de audición.</p>
+      </section>
+
+      <!-- Evidencia: Crisis -->
+      <section>
+        <h2>Estado C: Modo Calma / Validación</h2>
+        <img src="assets/screenshot_calma.jpg" class="img-mockup" alt="Modo Calma">
+        <p style="font-size: 0.7em;">Verde Oliva biofílico. Activado ante agitación ("¿Dónde está mamá?"). Respuestas afectivas ralentizadas (Pitch: 0.8).</p>
+      </section>
+
+      <!-- UX / UI -->
+      <section>
+        <h2>Heurísticas UX (Zero-UI)</h2>
+        <ul style="font-size: 0.8em; text-align: left; line-height: 1.5;">
+          <li>👁️ <strong>Visibilidad del Sistema:</strong> Respiración pulsante en pantalla. No requiere tocar botones.</li>
+          <li>🌎 <strong>Coincidencia con el Mundo Real:</strong> Lenguaje de Terapia de Validación gerontológica.</li>
+          <li>🛡️ <strong>Prevención de Errores:</strong> Al eliminar la UI interactiva tradicional (0 menús), el margen de error del usuario es nulo.</li>
+          <li>🧠 <strong>Reconocimiento sobre recuerdo:</strong> Uso del 60% de la pantalla para fotos evocativas, encendiendo la memoria episódica.</li>
+        </ul>
+      </section>
+
+      <!-- Seguridad y Privacidad -->
+      <section>
+        <h2>Seguridad y Privacidad (Stateless)</h2>
+        <div class="box-card" style="font-size: 0.8em; text-align: left;">
+          <strong>🔐 Almacenamiento Local Fuerte:</strong> Todos los biomarcadores, datos médicos, rutinas e historial residen EXCLUSIVAMENTE en el navegador del adulto mayor (Offline).<br><br>
+          <strong>🛡️ Prompt Injection:</strong> Los Guardrails bloquean manipulaciones verbales. La validación restringe el margen de respuesta sintética a frases cálidas parametrizadas.<br><br>
+          <strong>🗝️ Aislamiento Dashboard:</strong> El Dashboard PWA familiar está aislado lógicamente de la tablet Zero-UI.
+        </div>
+      </section>
+      
+      <!-- PARTE 2: IA Local -->
+      <section>
+        <section>
+          <h2>El Rol de los SLM Locales (Parte 2)</h2>
+          <p style="font-size: 0.8em;">Inferencia local sin internet con modelos como <strong>Llama3.2:1b</strong> (Ollama).</p>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Ollama_Logo.svg" alt="Ollama" style="height: 100px; filter: invert(1);">
+        </section>
+        <section>
+          <h3>¿Por qué Local?</h3>
+          <ul style="font-size: 0.7em; text-align: left; line-height: 1.5;">
+            <li><strong>Latencia Cero:</strong> Respuestas en milisegundos evitan angustia en ancianos que esperan feedback.</li>
+            <li><strong>Privacidad Total (HIPAA):</strong> Audio captado de la intimidad del hogar no viaja por la red.</li>
+            <li><strong>Autonomía en Cortes:</strong> Funciona sin conexión a servidores en la nube.</li>
+          </ul>
+          <div class="box-card" style="font-size: 0.7em; text-align: left; margin-top: 20px;">
+            <strong style="color:var(--amber);">Prueba en Terminal (Llama 3.2 1B):</strong><br>
+            Respondió validando parcialmente la desorientación en ~15s (CPU), pero concluimos que nuestro motor híbrido Zero-UI con reglas deterministas es más veloz y terapéutico por ahora.
+          </div>
+        </section>
+      </section>
+
+      <!-- Conclusión -->
+      <section>
+        <h1 style="color: var(--amber);">¡Gracias!</h1>
+        <p>ECOS: Diseñando tecnología que no se siente como tecnología.</p>
+        <p style="font-size: 0.6em; margin-top: 50px;">
+          <a href="index.html" style="color: #38BDF8;">Volver a la App Principal</a>
+        </p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      center: true,
+      hash: true,
+      transition: 'fade', // none/fade/slide/convex/concave/zoom
+    });
+  </script>
+</body>
+</html>

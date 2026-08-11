@@ -18,6 +18,10 @@ export class DashboardUI {
     const latestStatus = history[0] ? history[0].status : 'Estable';
     const isCalm = latestStatus.includes('Agitación') || latestStatus.includes('Ansiedad');
 
+    const auth = this.orchestrator.auth;
+    const role = auth ? auth.getCurrentRole() : null;
+    const userName = auth && auth.currentUser ? auth.currentUser : 'Visitante';
+
     this.container.innerHTML = `
       <div class="dashboard-container">
         <!-- Tarjeta de Perfil y Estado -->
@@ -29,7 +33,10 @@ export class DashboardUI {
               <p>Cuidador Responsable: <strong>${patient.primaryCaregiver}</strong> | ${patient.condition}</p>
             </div>
           </div>
-          <div>
+          <div style="display: flex; gap: 15px; align-items: center;">
+            <div style="color: #94a3b8; font-size: 0.85rem; text-align: right;">
+              Sesión activa:<br><strong style="color:#fff;">${userName}</strong>
+            </div>
             <span class="status-badge ${isCalm ? 'calm' : 'stable'}">
               ${isCalm ? '🟡 Modo Calma Activo' : '🟢 Estado Estable / Alegre'}
             </span>
@@ -71,6 +78,7 @@ export class DashboardUI {
 
           <!-- Columna Derecha: Grabador de Voz & Rutinas -->
           <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            ${role === 'family' || role === 'admin' ? `
             <div class="dash-card">
               <div class="dash-card-title">
                 <span>💌 Enviar Mensaje Afectivo de Voz</span>
@@ -85,6 +93,14 @@ export class DashboardUI {
                 </button>
               </div>
             </div>
+            ` : `
+            <div class="dash-card">
+              <div class="dash-card-title">
+                <span>💌 Mensajes Familiares</span>
+              </div>
+              <p style="font-size: 0.85rem; color: #94a3b8;">La inyección de mensajes afectivos está reservada para el rol Familia.</p>
+            </div>
+            `}
 
             <div class="dash-card">
               <div class="dash-card-title">
@@ -99,6 +115,7 @@ export class DashboardUI {
                     </div>
                     <span style="color: ${r.completed ? '#34D399' : '#FBBF24'}; font-size: 0.8rem; font-weight: 600;">
                       ${r.completed ? '✓ Cumplido' : '⏳ Pendiente'}
+                      ${(role === 'health' || role === 'admin') && !r.completed ? ' <a href="#" style="color:#38BDF8; margin-left: 10px;">(Marcar)</a>' : ''}
                     </span>
                   </div>
                 `).join('')}
