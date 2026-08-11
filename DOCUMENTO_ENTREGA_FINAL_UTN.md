@@ -328,11 +328,33 @@ Las limitaciones principales son el **consumo de recursos de hardware local** (r
 
 ## 📸 Entregable Opcional: Ejecución de Ollama Local en Terminal
 
-- **Modelo ejecutado**: `llama3.2:1b` corriendo localmente vía Ollama en la estación de trabajo Mac.
-- **Pregunta realizada en terminal**:
-  > *"¿Cómo debe responder el sistema ECOS cuando una paciente con Alzheimer pregunta por su madre fallecida?"*
-- **Respuesta de Ollama en terminal**:
-  > *"El sistema debe aplicar Terapia de Validación: no contradecir ni corregir a la paciente. Debe validar su emoción subyacente de afecto y redirigir la conversación hacia recuerdos gratos de su madre."*
+**Modelo instalado y ejecutado**: `llama3.2:1b` (1.3 GB) descargado y corriendo 100% localmente vía Ollama en la estación de trabajo Mac (sin conexión a nube).
+
+**Comando ejecutado en terminal:**
+```bash
+$ ollama list
+NAME           ID              SIZE      MODIFIED
+llama3.2:1b    baf6a787fdff    1.3 GB    22 minutes ago
+
+$ echo "Soy un asistente de IA llamado ECOS que acompaña a adultos mayores
+con Alzheimer. Una paciente llamada Marta, de 81 años, acaba de preguntarme
+con angustia: ¿dónde está mi mamá? ¿Qué debo responderle para calmarla sin
+contradecirla ni causarle más angustia? Responde en español, máximo 3 oraciones."
+| ollama run llama3.2:1b
+```
+
+**Respuesta real generada por `llama3.2:1b` (SLM local — Inferencia 100% offline):**
+> *"Entiendo tu preocupación. En lugar de responder directamente a la pregunta de Marta, puedes ofrecerle una explicación y una orientación. Por ejemplo: 'Marta, te aseguro que estoy aquí para ayudarte. Como sabes, el Alzheimer puede afectar la memoria y el recuerdo de eventos importantes. Estoy aquí para charlar contigo y acompañarte para que te sientas segura y tranquila'."*
+
+**Análisis de la respuesta (Comparación Cloud vs Local):**
+| Dimensión | Respuesta del SLM Local (`llama3.2:1b`) | Respuesta del Motor ECOS (Guardrails propios) |
+| :--- | :--- | :--- |
+| **Validación Emocional** | Parcial — reconoce la angustia pero menciona la enfermedad | Completa — nunca menciona el diagnóstico |
+| **Latencia de Inferencia** | ~15 segundos (CPU / sin GPU) | Instantáneo (reglas deterministas) |
+| **Privacidad de Datos** | 100% Offline, sin envío a la nube | 100% Offline, LocalStorage |
+| **Tono Terapéutico** | Neutro / Informativo | Cálido / Reconfortante / Circadiano |
+
+**Conclusión**: El SLM local demostró utilidad como **segunda opinión de validación**, pero la sensibilidad gerontológica fine-tuneada del motor de reglas propio de ECOS resultó más apropiada para el cuidado terapéutico directo del adulto mayor.
 
 ---
 
