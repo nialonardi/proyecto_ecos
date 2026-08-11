@@ -1,0 +1,51 @@
+/* Sistema de Colores Terapéuticos y Gerontológicos - Proyecto ECOS */
+
+:root {
+  /* Modo Estándar (Diurno 08:00 - 17:00 hs) */
+  --color-teal-clinico: #1A5F7A;
+  --color-teal-clinico-rgb: 26, 95, 122;
+  --color-blanco-hueso: #F9F8F6;
+  --color-blanco-hueso-rgb: 249, 248, 246;
+  --color-gris-neblina: #E8E8E8;
+  --color-gris-neblina-rgb: 232, 232, 232;
+  
+  /* Modo Calma (Vespertino / Mitigación de Crisis 17:00 - 08:00 hs) */
+  --color-verde-oliva: #4A5D4E;
+  --color-verde-oliva-rgb: 74, 93, 78;
+  --color-ambar-calido: #E5BA73;
+  --color-ambar-calido-rgb: 229, 186, 115;
+
+  /* Modo Reposo Activo (Reloj Nocturno) */
+  --color-fondo-oscuro: #090B0E;
+  --color-agujas-reloj: #E8E8E8;
+
+  /* UI Dashboard & DevStudio Tokens */
+  --bg-dashboard: #0F172A;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --border-card: rgba(255, 255, 255, 0.1);
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --accent-cyan: #38BDF8;
+  --accent-emerald: #34D399;
+  --accent-amber: #FBBF24;
+  --accent-rose: #FB7185;
+
+  /* Transición Terapéutica Fluid */
+  --theme-transition: background-color 1.2s ease-in-out, color 1.2s ease-in-out, border-color 1.2s ease-in-out;
+}
+
+/* Clases de tema circadiano para la pantalla del adulto mayor */
+.theme-standby {
+  background-color: var(--color-fondo-oscuro) !important;
+  color: var(--color-gris-neblina) !important;
+}
+
+.theme-daytime {
+  background-color: var(--color-teal-clinico) !important;
+  color: var(--color-blanco-hueso) !important;
+}
+
+.theme-calm {
+  background-color: var(--color-verde-oliva) !important;
+  color: var(--color-ambar-calido) !important;
+}
