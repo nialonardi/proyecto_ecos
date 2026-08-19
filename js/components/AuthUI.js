@@ -1,11 +1,12 @@
 /**
  * AuthUI.js - Componente de Autenticación RBAC
- * Maneja el modal de inicio de sesión y la validación con el backend (server.py)
+ * Maneja el modal de inicio de sesión y la validación con la API ECOS (backend/)
  */
 
 export class AuthUI {
-  constructor(containerEl) {
+  constructor(containerEl, apiClient) {
     this.container = containerEl;
+    this.api = apiClient;
     this.onLoginSuccess = null;
     this.currentRole = null;
     this.currentUser = null;
@@ -63,13 +64,7 @@ export class AuthUI {
     errorEl.style.display = 'none';
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, password: pass })
-      });
-
-      const data = await response.json();
+      const data = await this.api.login(user, pass);
 
       if (data.success) {
         if (!requiredRoles.includes(data.role)) {
@@ -78,6 +73,7 @@ export class AuthUI {
           return;
         }
 
+        this.api.setToken(data.token);
         this.currentRole = data.role;
         this.currentUser = data.name;
         this.container.style.display = 'none';
@@ -101,6 +97,7 @@ export class AuthUI {
           btnLogout.style.display = 'flex';
           btnLogout.onclick = () => {
             if(confirm("¿Seguro que deseas cerrar la sesión actual?")) {
+              this.api.clearToken();
               window.location.reload();
             }
           };
@@ -114,7 +111,7 @@ export class AuthUI {
         errorEl.style.display = 'block';
       }
     } catch (err) {
-      errorEl.textContent = 'Error de conexión con el backend (server.py).';
+      errorEl.textContent = 'Error de conexión con el backend (API ECOS).';
       errorEl.style.display = 'block';
     }
   }

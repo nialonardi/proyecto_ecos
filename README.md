@@ -18,7 +18,7 @@
    - **Pantalla A (Reposo Activo)**: Reloj analógico minimalista en Gris Neblina (`#E8E8E8`) con sensor de presencia por mirada (>3s).
    - **Pantalla B (Interacción Diurna)**: Azul Teal Clínico (`#1A5F7A`), fotografías de reminiscencia biográfica y texto a gran escala en Blanco Hueso (`#F9F8F6`) >36pt.
    - **Pantalla C (Modo Calma / Crisis)**: Verde Oliva Atenuado (`#4A5D4E`) y Ámbar Cálido (`#E5BA73`), paisajes biofílicos y Terapia de Validación con voz pausada.
-2. **Red de 7 Agentes Inteligentes**:
+2. **Red de 7 Agentes Inteligentes (orquestados server-side)**:
    - `Captura`, `Conversacional`, `Emocional`, `Planificación`, `Memoria`, `Aprendizaje` y `Orquestador Central`.
 3. **Dashboard Familiar PWA (Cuidadores)**:
    - Visualización de biomarcadores emocionales de 24hs, control de rutinas médicas e inyección de notas de voz afectivas.
@@ -29,11 +29,12 @@
 
 ## 🛠️ Stack Tecnológico
 
-- **Frontend**: HTML5 Nativo + CSS3 Vanilla + JavaScript ES6 Módulos
-- **Engine Agéntico**: JavaScript Nativo + Conexión Hub MCP Rust (`Antigravity_multyMCP`)
-- **Base de Datos**: Persistent `MemoryStore` (LocalStorage + JSON Schema)
-- **Voz / Síntesis**: Web Speech API (`SpeechRecognition` / `SpeechSynthesis`) + Emotional Analyzer
-- **Servidor Web**: Python 3.x `http.server` (Puerto 8085 / 8080)
+- **Frontend**: HTML5 Nativo + CSS3 Vanilla + JavaScript ES6 Módulos (cliente delgado, sin lógica de negocio)
+- **Backend**: FastAPI (Python) — orquesta server-side el ciclo de 7 pasos y expone la API REST
+- **Base de Datos**: SQLite vía SQLAlchemy (reemplaza el `MemoryStore` de `localStorage` del prototipo)
+- **Autenticación**: JWT firmado (RBAC por rol: `family`, `health`, `admin`)
+- **Voz / Síntesis**: Web Speech API (`SpeechRecognition` / `SpeechSynthesis`) en el navegador
+- **Agente Conversacional**: Claude (Anthropic) cuando hay `ANTHROPIC_API_KEY` configurada; si no, respuestas deterministas de respaldo. Los guardrails de seguridad (Terapia de Validación, restricción médica) son siempre deterministas y tienen prioridad sobre el LLM.
 
 ---
 
@@ -44,12 +45,23 @@
    git clone https://github.com/nicolas-ialonardi/proyecto_ecos.git
    cd proyecto_ecos
    ```
-2. Iniciar el servidor web nativo en Python:
+2. Instalar las dependencias del backend (recomendado usar un entorno virtual):
    ```bash
-   python3 -m http.server 8085
+   cd backend
+   python3 -m venv .venv && source .venv/bin/activate
+   pip install -r requirements.txt
    ```
-3. Abrir en el navegador:
+3. (Opcional) Copiar `.env.example` a `.env` y configurar `ANTHROPIC_API_KEY` si se quiere
+   generación de conversación vía LLM real. Sin la key, el sistema funciona igual con
+   respuestas deterministas.
+4. Levantar el servidor (sirve la API y el frontend en el mismo puerto):
+   ```bash
+   uvicorn main:app --reload --port 8085
+   ```
+5. Abrir en el navegador:
    **`http://localhost:8085`**
+
+Usuarios de prueba (RBAC): `familia/123`, `doctor/123`, `admin/admin`.
 
 ---
 

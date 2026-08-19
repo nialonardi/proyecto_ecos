@@ -1,35 +1,25 @@
 /**
- * Orchestrator.js - Orquestador Central del Ecosistema ECOS
- * Dirige el ciclo de 7 pasos: Observar -> Analizar -> Planificar -> Ejecutar -> Evaluar -> Aprender -> Nueva Observación.
+ * Orchestrator.js - Cliente del Orquestador Agéntico Central de ECOS.
+ * Ya no ejecuta la lógica de los agentes en el navegador: delega el ciclo completo
+ * (Observar -> Analizar -> Planificar -> Ejecutar -> Evaluar -> Aprender) al backend
+ * vía ApiClient, y solo se encarga de capturar voz/presencia y reproducir la respuesta.
  */
-import { MemoryStore } from './MemoryStore.js';
-import { SafetyRules } from './SafetyRules.js';
+import { ApiClient } from './ApiClient.js';
 import { CaptureAgent } from './agents/CaptureAgent.js';
-import { EmotionalAgent } from './agents/EmotionalAgent.js';
-import { MemoryAgent } from './agents/MemoryAgent.js';
-import { PlanningAgent } from './agents/PlanningAgent.js';
 import { ConversationalAgent } from './agents/ConversationalAgent.js';
-import { LearningAgent } from './agents/LearningAgent.js';
 
 export class Orchestrator {
   constructor(uiCallbacks = {}) {
     this.uiCallbacks = uiCallbacks;
+    this.api = new ApiClient();
 
-    // Instanciar almacén de memoria persistente
-    this.memoryStore = new MemoryStore();
-
-    // Instanciar Agentes Especializados
-    this.memoryAgent = new MemoryAgent(this.memoryStore);
-    this.emotionalAgent = new EmotionalAgent(this.memoryStore);
-    this.planningAgent = new PlanningAgent(this.memoryAgent);
     this.conversationalAgent = new ConversationalAgent();
-    this.learningAgent = new LearningAgent(this.memoryStore);
 
     // Estado global de la orquestación
     this.currentMode = 'STANDBY'; // 'STANDBY' | 'DAYTIME' | 'CALM'
     this.activeWorkingAgent = null;
 
-    // Agente de Captura (inicia escucha y sensores)
+    // Captura de voz y sensores (sigue siendo responsabilidad del navegador)
     this.captureAgent = new CaptureAgent(
       (transcript) => this.handleVoiceInput(transcript),
       () => this.handlePresenceDetected()
@@ -48,71 +38,48 @@ export class Orchestrator {
     }
   }
 
-  // PASO 1: OBSERVAR - Detección de Presencia / Mirada
-  handlePresenceDetected() {
+  replayStepsFromBackend(steps = []) {
+    steps.forEach(step => this.logAgentActivity(step.agent, step.message, step.level));
+  }
+
+  async handlePresenceDetected() {
     this.logAgentActivity('Captura', 'Sensor de presencia activado (>3s mirada sostenida).');
-    const context = this.captureAgent.getCurrentContext();
-
-    if (context.isNightOrDusk) {
-      this.setMode('CALM');
-    } else {
-      this.setMode('DAYTIME');
+    try {
+      const plan = await this.api.presence();
+      this.applyPlan(plan);
+    } catch (err) {
+      this.logAgentActivity('Orquestador', `Error al consultar el backend: ${err.message}`, 'warn');
     }
-
-    // Iniciar ciclo conversacional proactivo inicial
-    this.runOrchestrationCycle("PRESENCE_TRIGGER");
   }
 
-  // PASO 1: OBSERVAR - Procesamiento de Entrada de Voz
-  handleVoiceInput(transcript) {
+  async handleVoiceInput(transcript) {
     this.logAgentActivity('Captura', `Audio recibido del usuario: "${transcript}"`);
-    this.runOrchestrationCycle(transcript);
+    await this.runOrchestrationCycle(transcript);
   }
 
-  // CICLO COMPLETO DE ORQUESTACIÓN AGÉNTICA (7 PASOS)
-  runOrchestrationCycle(input) {
-    const patient = this.memoryStore.getPatientProfile();
-    const context = this.captureAgent.getCurrentContext();
-
-    // PASO 2: ANALIZAR (Emocional + Safety Guardrails)
-    this.logAgentActivity('Emocional', 'Analizando prosodia y carga afectiva del audio...');
-    const emotionalResult = this.emotionalAgent.processInteraction(
-      input === "PRESENCE_TRIGGER" ? "Hola ECOS" : input
-    );
-
-    this.logAgentActivity('Orquestador', 'Verificando Reglas de Seguridad y Terapia de Validación...');
-    const validationResult = SafetyRules.applyValidationTherapy(
-      input === "PRESENCE_TRIGGER" ? "" : input,
-      patient
-    );
-
-    // PASO 3: PLANIFICAR
-    this.logAgentActivity('Planificación', 'Formulando la mejor acción y estrategia conversacional...');
-    const plan = this.planningAgent.planNextAction(emotionalResult, validationResult, context);
-
-    // Ajustar modo de pantalla según la acción del plan
-    if (plan.actionType === 'ACTIVATE_CALM_MODE') {
-      this.setMode('CALM');
-    } else {
-      this.setMode('DAYTIME');
+  // Corre el ciclo completo de orquestación agéntica (server-side) y renderiza el resultado.
+  async runOrchestrationCycle(input, hourOverride = undefined) {
+    try {
+      const plan = hourOverride === undefined
+        ? await this.api.interact(input)
+        : await this.api.interact(input, hourOverride);
+      this.applyPlan(plan);
+    } catch (err) {
+      this.logAgentActivity('Orquestador', `Error al consultar el backend: ${err.message}`, 'warn');
     }
+  }
 
-    // PASO 4: EJECUTAR (Renderizado Zero-UI + Voz)
-    this.logAgentActivity('Conversacional', `Generando síntesis de voz adaptable: "${plan.responseText}"`);
+  applyPlan(plan) {
+    // Reproducir en el DevStudio el log real de pasos que ejecutó el backend.
+    this.replayStepsFromBackend(plan.steps);
+
+    this.setMode(plan.mode === 'CALM' ? 'CALM' : 'DAYTIME');
+
     if (this.uiCallbacks.onRenderInteractiveScreen) {
       this.uiCallbacks.onRenderInteractiveScreen(plan);
     }
 
     this.conversationalAgent.speak(plan.responseText, plan.synthSettings);
-
-    // Si era un mensaje de voz familiar inyectado, marcar como leído
-    if (plan.actionType === 'INJECT_FAMILY_VOICE_MEMO' && plan.memo) {
-      this.memoryAgent.markVoiceMemoAsRead(plan.memo.id);
-    }
-
-    // PASOS 5, 6 y 7: EVALUAR, APRENDER Y NUEVA OBSERVACIÓN
-    this.logAgentActivity('Aprendizaje', 'Evaluando métricas de satisfacción y actualizando modelo persistente...');
-    this.learningAgent.evaluateInteraction(plan.actionType, emotionalResult);
 
     if (this.uiCallbacks.onStateUpdated) {
       this.uiCallbacks.onStateUpdated();

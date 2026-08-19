@@ -159,8 +159,7 @@ export class DevStudioUI {
 
     if (btnSunset) {
       btnSunset.addEventListener('click', () => {
-        this.orchestrator.setMode('CALM');
-        this.orchestrator.runOrchestrationCycle('Atardecer circadiano 18:00');
+        this.orchestrator.runOrchestrationCycle('Atardecer circadiano 18:00', 18);
       });
     }
 

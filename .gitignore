@@ -1,8 +1,6 @@
-# Archivos ignorados por Git
+__pycache__/
+*.pyc
+backend/.venv/
+backend/ecos.db
+backend/.env
 .DS_Store
-*.log
-node_modules/
-.env
-.env.local
-.vscode/
-.idea/
