@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const authUI = new AuthUI(document.getElementById('authModal'));
+  const authUI = new AuthUI(document.getElementById('authModal'), orchestrator.api);
   orchestrator.auth = authUI; // Inyectar AuthUI en el orchestrator para que el Dashboard lo lea
 
   // 2. Instanciar Vistas de Interfaz

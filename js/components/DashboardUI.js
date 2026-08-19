@@ -1,6 +1,7 @@
 /**
  * DashboardUI.js - Panel Web para Familiares y Cuidadores (PWA)
  * Permite monitoreo no invasivo del bienestar del adulto mayor e inyección de mensajes afectivos de voz.
+ * Todos los datos se obtienen del backend vía ApiClient (ya no de localStorage).
  */
 
 export class DashboardUI {
@@ -9,25 +10,39 @@ export class DashboardUI {
     this.orchestrator = orchestrator;
   }
 
-  render() {
-    const memory = this.orchestrator.memoryStore;
-    const patient = memory.getPatientProfile();
-    const routines = memory.getRoutines();
-    const history = memory.getEmotionalHistory();
-
-    const latestStatus = history[0] ? history[0].status : 'Estable';
-    const isCalm = latestStatus.includes('Agitación') || latestStatus.includes('Ansiedad');
-
+  async render() {
     const auth = this.orchestrator.auth;
     const role = auth ? auth.getCurrentRole() : null;
     const userName = auth && auth.currentUser ? auth.currentUser : 'Visitante';
+
+    if (!role) {
+      this.container.innerHTML = `<div class="dashboard-container"><p>Iniciá sesión para ver el panel familiar.</p></div>`;
+      return;
+    }
+
+    this.container.innerHTML = `<div class="dashboard-container"><p>Cargando datos del paciente...</p></div>`;
+
+    let patient, routines, history;
+    try {
+      [patient, routines, history] = await Promise.all([
+        this.orchestrator.api.getPatient(),
+        this.orchestrator.api.getRoutines(),
+        this.orchestrator.api.getEmotionalHistory(),
+      ]);
+    } catch (err) {
+      this.container.innerHTML = `<div class="dashboard-container"><p>Error al cargar el dashboard: ${err.message}</p></div>`;
+      return;
+    }
+
+    const latestStatus = history[0] ? history[0].status : 'Estable';
+    const isCalm = latestStatus.includes('Agitación') || latestStatus.includes('Ansiedad');
 
     this.container.innerHTML = `
       <div class="dashboard-container">
         <!-- Tarjeta de Perfil y Estado -->
         <div class="dashboard-header-card">
           <div class="patient-profile">
-            <div class="patient-avatar">M</div>
+            <div class="patient-avatar">${patient.name.charAt(0)}</div>
             <div class="patient-info">
               <h2>Perfil de ${patient.name} ${patient.lastName} (${patient.age} años)</h2>
               <p>Cuidador Responsable: <strong>${patient.primaryCaregiver}</strong> | ${patient.condition}</p>
@@ -49,7 +64,7 @@ export class DashboardUI {
             <div class="dash-card">
               <div class="dash-card-title">
                 <span>📊 Biomarcadores de Ánimo (Últimas 24 Horas)</span>
-                <span style="font-size: 0.85rem; color: #34D399; font-weight: 500;">84% Bienestar</span>
+                <span style="font-size: 0.85rem; color: #34D399; font-weight: 500;">${Math.round((history[0]?.valence ?? 0.84) * 100)}% Bienestar</span>
               </div>
               <div class="biomarker-progress-bar">
                 <div class="biomarker-fill"></div>
@@ -115,7 +130,7 @@ export class DashboardUI {
                     </div>
                     <span style="color: ${r.completed ? '#34D399' : '#FBBF24'}; font-size: 0.8rem; font-weight: 600;">
                       ${r.completed ? '✓ Cumplido' : '⏳ Pendiente'}
-                      ${(role === 'health' || role === 'admin') && !r.completed ? ' <a href="#" style="color:#38BDF8; margin-left: 10px;">(Marcar)</a>' : ''}
+                      ${(role === 'health' || role === 'admin') && !r.completed ? ` <a href="#" class="complete-routine-link" data-routine-id="${r.id}" style="color:#38BDF8; margin-left: 10px;">(Marcar)</a>` : ''}
                     </span>
                   </div>
                 `).join('')}
@@ -130,15 +145,31 @@ export class DashboardUI {
     const sendBtn = this.container.querySelector('#sendVoiceMemoBtn');
     const memoInput = this.container.querySelector('#voiceMemoInput');
     if (sendBtn && memoInput) {
-      sendBtn.addEventListener('click', () => {
+      sendBtn.addEventListener('click', async () => {
         const text = memoInput.value.trim();
-        if (text) {
-          this.orchestrator.memoryStore.addVoiceMemo('Nicolás (Hijo)', text);
+        if (!text) return;
+        try {
+          await this.orchestrator.api.createVoiceMemo(patient.primaryCaregiver, text);
           alert('¡Mensaje de voz afectivo encolado exitosamente! El orquestador lo inyectará en la próxima interacción receptiva.');
-          memoInput.value = '';
           this.render();
+        } catch (err) {
+          alert(`No se pudo enviar el mensaje: ${err.message}`);
         }
       });
     }
+
+    // Event listeners para marcar rutinas como cumplidas
+    this.container.querySelectorAll('.complete-routine-link').forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const routineId = link.getAttribute('data-routine-id');
+        try {
+          await this.orchestrator.api.completeRoutine(routineId);
+          this.render();
+        } catch (err) {
+          alert(`No se pudo actualizar la rutina: ${err.message}`);
+        }
+      });
+    });
   }
 }
