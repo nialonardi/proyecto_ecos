@@ -65,6 +65,20 @@ Usuarios de prueba (RBAC): `familia/123`, `doctor/123`, `admin/admin`.
 
 ---
 
+## ☁️ Despliegue (Render u otro hosting)
+
+- El proyecto fija la versión de Python a **3.12** vía `runtime.txt` / `.python-version`
+  (en la raíz y en `backend/`). Es necesario: `pydantic` depende de `pydantic-core`
+  (compilado en Rust con `maturin`), que todavía no publica wheels precompilados para
+  versiones de Python muy nuevas (ej. 3.14). Sin el pin, el hosting intenta compilar
+  `pydantic-core` desde código fuente en build time y falla porque el filesystem de
+  build es de solo lectura (no puede escribir el cache de `cargo`).
+- La base de datos es SQLite **en memoria** (ver sección anterior) — no requiere disco
+  persistente, apto para hosting con filesystem efímero o de solo lectura.
+- Comando de arranque sugerido (desde `backend/`): `uvicorn main:app --host 0.0.0.0 --port $PORT`
+
+---
+
 ## 📑 Documentación Académica Obligatoria (UTN FRBA)
 
 - 📄 [Documento Completo de Entrega Final (PDF / MD)](./DOCUMENTO_ENTREGA_FINAL_UTN.md)
