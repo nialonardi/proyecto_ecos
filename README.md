@@ -31,7 +31,7 @@
 
 - **Frontend**: HTML5 Nativo + CSS3 Vanilla + JavaScript ES6 Módulos (cliente delgado, sin lógica de negocio)
 - **Backend**: FastAPI (Python) — orquesta server-side el ciclo de 7 pasos y expone la API REST
-- **Base de Datos**: SQLite vía SQLAlchemy (reemplaza el `MemoryStore` de `localStorage` del prototipo)
+- **Base de Datos**: SQLite en memoria vía SQLAlchemy (reemplaza el `MemoryStore` de `localStorage` del prototipo). No escribe a disco — pensado para hosting sin filesystem persistente; los datos se resiembran en cada reinicio del proceso. Configurable a un archivo con `ECOS_DB_URL` para desarrollo local.
 - **Autenticación**: JWT firmado (RBAC por rol: `family`, `health`, `admin`)
 - **Voz / Síntesis**: Web Speech API (`SpeechRecognition` / `SpeechSynthesis`) en el navegador
 - **Agente Conversacional**: Claude (Anthropic) cuando hay `ANTHROPIC_API_KEY` configurada; si no, respuestas deterministas de respaldo. Los guardrails de seguridad (Terapia de Validación, restricción médica) son siempre deterministas y tienen prioridad sobre el LLM.
