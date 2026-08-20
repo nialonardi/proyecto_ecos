@@ -4,6 +4,7 @@ Reemplaza a server.py: además de servir la API real (auth JWT, orquestación ag
 server-side, dashboard familiar), sirve el frontend estático para mantener el flujo de
 un solo puerto que tenía el prototipo original.
 """
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -63,4 +64,5 @@ def serve_presentation():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8085, reload=True)
+    port = int(os.environ.get("PORT", 8085))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
